@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en-GB"></html>
+<html>
+	<head>
+    <meta charset="utf-8" />
+		<title>Titulo</title>
+        <style>
+            html, body { margin: 0; padding: 0; overflow: hidden; }
+            #text {
+                position: absolute;
+                padding: 10px;
+                width: 100%;
+                text-align: center;
+                color: #8662c9;
+            }
+        </style>
+	</head>
+	<body>
+		<div id="text">	BRAZOS <br/>
+            NATALIA MONTAÑO<br/>
+        </div>
+	</body>
+    </html>
+
+<body>
+  <script type="module">
+    import * as THREE from 'https://sebastiann16.github.io/CompG/three.module.js';
+    import { OrbitControls } from 'https://sebastiann16.github.io/CompG/OrbitControls.js';
+    var WIDTH = window.innerWidth;
+    var HEIGHT = window.innerHeight;
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(WIDTH, HEIGHT);
+    renderer.setClearColor(0xD7DCDB, 1);
+    document.body.appendChild(renderer.domElement);
+
+    //Creacion de la escena
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT);
+    //Posicion de las camaras
+    camera.position.z = 10;
+    camera.position.y = 10;
+    camera.position.x = 10;
+    scene.add(camera);
+    //Luz de la escena
+    const light = new THREE.AmbientLight(0x53FBF1, 5);
+    scene.add(light);
+    const size = 200;
+    const divisions = 180;
+    const axes = new THREE.AxesHelper(2000);
+    scene.add(axes);
+
+  //Crear la Grilla
+    const gridHelper = new THREE.GridHelper(size, divisions);
+    scene.add(gridHelper);
+
+  //Crear visualizador de ejes
+    const axesHelper = new THREE.AxesHelper( 20 );
+    scene.add( axesHelper );
+
+  //Luz del escenario 
+    const luces = new THREE.DirectionalLight(0xCFAAF7, -1);
+    scene.add(luces);
+
+  //Arreglo de colores de los rectangulos
+     const color = [0x53FBF1,0xA461EC];
+
+  //Funcion rectangulo
+    function rectangulo(base, altura, ancho, col) {
+    const geometry = new THREE.BoxGeometry(base, altura, ancho);
+    const material = new THREE.MeshPhysicalMaterial({ color: col });
+    return new THREE.Mesh(geometry, material);
+    }
+
+  //Construccion de los rectangulos
+    var ArRec = [];
+    var n = color.length;
+    var lado=6; //Lado del rectangulo
+
+    for (var i = 0; i < n; i++) {
+      ArRec[i] = rectangulo(lado/4,lado, lado/4 , color[i]);
+      scene.add(ArRec[i]);
+    }
+
+    //Funcion de translacion
+    function translacion(rec,x1,y1,z1){
+
+      rec.position.x=x1;
+      rec.position.y=y1;
+      rec.position.z=z1;
+
+    }
+
+   translacion(ArRec[0],0,lado/2,0);
+   translacion(ArRec[1],0,9,0);
+
+    //Funcion de rotacion
+    function rotacion(ejeR,angulo){
+
+
+    }
+    //rotacion(ArRec[0]);
+    //rotacion(ArRec[1]);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+  // Funcion para poder moverlo en diferentes direcciones
+    function animate() {
+
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera)
+    }
+    animate();
+  </script>
+</body>
+
+</html>
