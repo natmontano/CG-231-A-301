@@ -31,7 +31,7 @@
 
     var renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(WIDTH, HEIGHT);
-    renderer.setClearColor(0xD7DCDB, 1);
+    renderer.setClearColor(0xF8E2E5, 1);
     document.body.appendChild(renderer.domElement);
 
     //Creacion de la escena
@@ -51,31 +51,31 @@
     scene.add(axes);
 
   //Crear la Grilla
-    const gridHelper = new THREE.GridHelper(size, divisions);
-    scene.add(gridHelper);
+     const gridHelper = new THREE.GridHelper(size, divisions);
+     scene.add(gridHelper);
 
   //Crear visualizador de ejes
-    const axesHelper = new THREE.AxesHelper( 20 );
-    scene.add( axesHelper );
+     const axesHelper = new THREE.AxesHelper( 20 );
+     scene.add( axesHelper );
 
   //Luz del escenario 
-    const luces = new THREE.DirectionalLight(0xCFAAF7, -1);
-    scene.add(luces);
+     const luces = new THREE.DirectionalLight(0xCFAAF7, -1);
+     scene.add(luces);
 
   //Arreglo de colores de los rectangulos
      const color = [0x53FBF1,0xA461EC];
 
   //Funcion rectangulo
-    function rectangulo(base, altura, ancho, col) {
-    const geometry = new THREE.BoxGeometry(base, altura, ancho);
-    const material = new THREE.MeshPhysicalMaterial({ color: col });
-    return new THREE.Mesh(geometry, material);
+     function rectangulo(base, altura, ancho, col) {
+     const geometry = new THREE.BoxGeometry(base, altura, ancho);
+     const material = new THREE.MeshPhysicalMaterial({ color: col });
+     return new THREE.Mesh(geometry, material);
     }
 
   //Construccion de los rectangulos
-    var ArRec = [];
-    var n = color.length;
-    var lado=6; //Lado del rectangulo
+     var ArRec = [];
+     var n = color.length;
+     var lado=6; //Lado del rectangulo
 
     for (var i = 0; i < n; i++) {
       ArRec[i] = rectangulo(lado/4,lado, lado/4 , color[i]);
@@ -85,24 +85,51 @@
     //Funcion de translacion
     function translacion(rec,x1,y1,z1){
 
-      rec.position.x=x1;
-      rec.position.y=y1;
-      rec.position.z=z1;
+     rec.position.x=x1;
+     rec.position.y=y1;
+     rec.position.z=z1;
 
     }
 
-   translacion(ArRec[0],0,lado/2,0);
-   translacion(ArRec[1],0,9,0);
+    //translacion de rectangulos
+     translacion(ArRec[0],0,lado/2,0);
+     translacion(ArRec[1],1.5,lado+3,0);
 
-    //Funcion de rotacion
-    function rotacion(ejeR,angulo){
+   //Variables declaracion
+     var x = new THREE.Vector3(1,0,0) 
+     var y = new THREE.Vector3(0,1,0)
+     var z = new THREE.Vector3(0,0,1)
+     var beta = Grados(30);
+     var alfa = Grados(-30);
+     var gama = 0;
+     
+     //Funcion para pasar de grados a radianes
+     function Grados(NumGrados) {
+     return NumGrados * Math.PI/180 ;
+   }
+   //Funcion de rotacion de las figuras 
+     function rotacion( rec, eje, angulo) {
+    //Constante de numeros reales 
+     const quaternion = new THREE.Quaternion();
+     quaternion.setFromAxisAngle(eje, angulo); 
+     rec.quaternion.multiply(quaternion); 
+   }
+  //Rotacion rectangulo 2
+     ArRec[1].rotation.z = Math.PI + alfa;
 
+  //Grupo nuevo de figuras y añadir los rectangulos
+     const grupo = new THREE.Group();
+     grupo.add(ArRec[0]);
+     grupo.add(ArRec[1]);
 
-    }
-    //rotacion(ArRec[0]);
-    //rotacion(ArRec[1]);
+  //Agregar grupo a la escena
+     scene.add(grupo);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
+  //Rotacion del grupo de figuras
+     rotacion(grupo, z, -beta);
+     grupo.rotation.y += gama;
+
+  const controls = new OrbitControls(camera, renderer.domElement);
 
   // Funcion para poder moverlo en diferentes direcciones
     function animate() {
